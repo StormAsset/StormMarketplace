@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storm Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --muted: #98a0aa;
+      --accent: #7c5cff;
+      --accent-2: #5be6c4;
+      --card-shadow: 0 6px 20px rgba(2,6,23,0.7);
+      --radius: 14px;
+      color-scheme: dark;
+    }
+
+    /* Body & stars */
+    html, body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      height: 100vh;
+      font-weight: 100;
+      background: radial-gradient(#3968a2, #10171f);
+      overflow-y: hidden;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .light {
+      position: absolute;
+      width: 0px;
+      opacity: .75;
+      background-color: white;
+      box-shadow: #e9f1f1 0px 0px 20px 2px;
+      opacity: 0;
+      top: 100vh;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      margin: auto;
+    }
+
+    .x1{ animation: floatUp 4s infinite linear; transform: scale(1.0); }
+    .x2{ animation: floatUp 7s infinite linear; transform: scale(1.6); left: 15%; }
+    .x3{ animation: floatUp 2.5s infinite linear; transform: scale(.5); left: -15%; }
+    .x4{ animation: floatUp 4.5s infinite linear; transform: scale(1.2); left: -34%; }
+    .x5{ animation: floatUp 8s infinite linear; transform: scale(2.2); left: -57%; }
+    .x6{ animation: floatUp 3s infinite linear; transform: scale(.8); left: -81%; }
+    .x7{ animation: floatUp 5.3s infinite linear; transform: scale(3.2); left: 37%; }
+    .x8{ animation: floatUp 4.7s infinite linear; transform: scale(1.7); left: 62%; }
+    .x9{ animation: floatUp 4.1s infinite linear; transform: scale(0.9); left: 85%; }
+
+    @keyframes floatUp {
+      0% { top: 100vh; opacity: 0; }
+      25% { opacity: 1; }
+      50% { top: 0vh; opacity: .8; }
+      75% { opacity: 1; }
+      100% { top: -100vh; opacity: 0; }
+    }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Intro */
+    #intro {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: opacity 1s ease, filter 1s ease;
+      text-align: center;
+    }
+    
+    #intro.fade-out {
+      opacity: 0;
+      filter: blur(20px);
+      pointer-events: none;
+    }
+    
+    .header {
+      color: white;
+      font-size: 2em;
+      margin: 10px 0;
+    }
+    
+    #continueBtn {
+      position: absolute;
+      border: 2px solid white;
+      background: transparent;
+      font-family: inherit, ui-sans-serif;
+      color: white;
+      width: 250px;
+      height: 50px;
+      font-size: 2em;
+      border-radius: 5px;
+      opacity: .5;
+      top: 60vh;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      margin: auto;
+      transition: .3s;
+    }
+    
+    #continueBtn:hover {
+      border: 2px solid #104F55;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      color: #104F55;
+      opacity: .8;
+      transition: .3s;
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+    
+    #continueBtn:focus {
+      outline: none;
+    }
+
+    /* Main Marketplace */
+    #main {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 18px;
+    }
+    
+    #main.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 700;
+      color: white;
+    }
+    
+    p.lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    
+    main {
+      flex: 1;
+      padding: 18px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 18px;
+    }
+
+    /* Marketplace Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+      justify-content: center;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 22px;
+    }
+    
+    .card {
+      padding: 16px;
+      cursor: pointer;
+      transition: transform .2s;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(10px);
+    }
+    
+    .card:hover {
+      transform: translateY(-6px);
+    }
+    
+    .thumb {
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0f1720;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .title {
+      font-weight: 700;
+      margin-top: 8px;
+      color: white;
+    }
+    
+    .desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    
+    .badge {
+      margin-top: 6px;
+      display: inline-block;
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
+    /* NEW MODAL DESIGN */
+    #modalOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #modalContent {
+      width: 90%;
+      max-width: 700px;
+      max-height: 85vh;
+      background: rgba(20, 25, 35, 0.95);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px 0;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 28px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-image {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0f1720;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .modal-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .modal-description {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .modal-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .modal-pill {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+      color: white;
+    }
+
+    .modal-pill.price-free {
+      background: rgba(0, 255, 0, 0.15);
+      color: #0f0;
+    }
+
+    .modal-pill.price-paid {
+      background: rgba(255, 215, 0, 0.15);
+      color: #ff0;
+    }
+
+    .modal-pill.price-private {
+      background: rgba(211, 32, 53, 0.15);
+      color: rgb(211, 32, 53);
+    }
+
+    .modal-languages {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .modal-footer {
+      padding: 0 24px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+    }
+
+    .modal-download {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #05121a;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(124, 92, 255, 0.4);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Header animations */
+    #head1, #head2, #head3, #head4, #head5 {
+      opacity: 0;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: inherit, ui-sans-serif;
+      font-weight: 200;
+      color: white;
+      font-size: 2em;
+    }
+
+    #head1 { animation: fadeOut 5s ease-in; }
+    #head2 { animation: fadeOut 5s ease-in 6s; }
+    #head3 { animation: fadeOut 5s ease-in 12s; }
+    #head4 { animation: fadeOut 5s ease-in 17s; }
+    #head5 { animation: finalFade 5s ease-in 22s forwards; }
+
+    @keyframes fadeOut {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      80% { opacity: .9; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes finalFade {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      80% { opacity: .9; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Intro Page -->
+  <div id="intro">
+    <p id='head1' class='header'>Apps That Shine</p>
+    <p id='head2' class='header'>Created</p>
+    <p id='head3' class='header'>Just For You</p>
+    <p id='head4' class='header'>Where simplicity wins.</p>
+    <p id='head5' class='header'>Welcome to Storm Marketplace</p>
+    <button id="continueBtn">Continue</button>
+    <div class='light x1'></div>
+    <div class='light x2'></div>
+    <div class='light x3'></div>
+    <div class='light x4'></div>
+    <div class='light x5'></div>
+    <div class='light x6'></div>
+    <div class='light x7'></div>
+    <div class='light x8'></div>
+    <div class='light x9'></div>
+  </div>
+
+  <!-- Stars -->
+  <div class="light x1"></div>
+  <div class="light x2"></div>
+  <div class="light x3"></div>
+  <div class="light x4"></div>
+  <div class="light x5"></div>
+  <div class="light x6"></div>
+  <div class="light x7"></div>
+  <div class="light x8"></div>
+  <div class="light x9"></div>
+
+  <!-- Main Marketplace -->
+  <div id="main">
+    <header>
+      <div class="brand">
+        <div class="logo">
+          <img src="https://raw.githubusercontent.com/StormAsset/StormMarketplace/refs/heads/main/shop1.svg" alt="Storm Marketplace Logo" width="40" height="40" />
+        </div>
+        <div>
+          <h1>Storm Marketplace</h1>
+          <p class="lead">Discover. Download. Enjoy.</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="appsGrid" class="grid"></div>
+    </main>
+    <footer>© 2025 Storm Marketplace • All rights reserved</footer>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalOverlay">
+    <div id="modalContent">
+      <!-- Modal content will be inserted here by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('continueBtn');
+    const intro = document.getElementById('intro');
+    const main = document.getElementById('main');
+
+    btn.addEventListener('click', () => {
+      intro.classList.add('fade-out');
+      setTimeout(() => { main.classList.add('active'); }, 1000);
+    });
+
+    const appsData = [
+      {
+        id: 'quester-launcher',
+        name: 'Quester Launcher',
+        short: 'A better launcher for your games',
+        description: 'Quester Launcher was designed to keep your desktop organized, eliminating the clutter of scattered shortcuts.',
+        thumb: 'https://raw.githubusercontent.com/StormAsset/StormMarketplace/refs/heads/main/galaxy.svg',
+        version: '1.3.0',
+        size: '9.07 MB',
+        price: 'FREE',
+        download: 'https://www.dropbox.com/scl/fi/e6emc8zbfgdjd96gpsnmd/Quester_Launcher.zip?rlkey=hb1a6v4mdtp3dqto17d0tgsb2&st=qu53sk2c&dl=1',
+        languages: ['English', 'Français'] 
+      },
+      {
+        id: 'windows-iso',
+        name: 'Windows ISO',
+        short: 'Download Windows ISO effortlessly',
+        description: 'Windows ISO lets you quickly download official Windows ISO files without searching the web.',
+        thumb: 'https://raw.githubusercontent.com/StormAsset/StormMarketplace/refs/heads/main/windows.svg',
+        version: '1.0.0',
+        size: '506 KB',
+        price: 'Private',
+        download: 'aHR0cHM6Ly93d3cuZHJvcGJveC5jb20vc2NsL2ZpL2wyZ3B5ZXR6dmlkdDZta28wa3FtZi9XaW5kb3dzX0lTTy56aXA/cmxrZXk9NGNoOW83a2xwdGd6aHNkczhtdnZjMnZwaCZzdD0wcDk0OGZpYSZkbD0x',
+        languages: ['English'] 
+      },
+    ];
+
+    const appsGrid = document.getElementById('appsGrid');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+
+    function renderCard(app) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.onclick = () => showModal(app);
+
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      const img = document.createElement('img');
+      img.src = app.thumb;
+      img.alt = app.name;
+      thumb.appendChild(img);
+      card.appendChild(thumb);
+
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = app.name;
+      card.appendChild(title);
+
+      const desc = document.createElement('div');
+      desc.className = 'desc';
+      desc.textContent = app.short;
+      card.appendChild(desc);
+
+      const badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = 'Loading version...';
+      card.appendChild(badge);
+
+      if (app.version) {
+        badge.textContent = 'v' + app.version;
+      } else if (app.versionUrl) {
+        fetch(app.versionUrl).then(r => r.text()).then(txt => {
+          badge.textContent = 'v' + txt.trim();
+        }).catch(() => {
+          badge.textContent = 'v?';
+        });
+      }
+
+      return card;
+    }
+
+    function showModal(app) {
+      modalContent.innerHTML = `
+        <div class="modal-header">
+          <h2 class="modal-title">${app.name}</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img src="${app.thumb}" alt="${app.name}">
+          </div>
+          <p class="modal-description">${app.description}</p>
+          <div class="modal-info">
+            <span class="modal-pill version-pill">Loading version...</span>
+            <span class="modal-pill">${app.size}</span>
+            <span class="modal-pill ${getPriceClass(app.price)}">${app.price || 'PRIVATE'}</span>
+          </div>
+          <div class="modal-languages">Languages: ${app.languages ? app.languages.join(', ') : 'English'}</div>
+        </div>
+        <div class="modal-footer">
+          <div></div> <!-- Empty spacer -->
+          <button class="modal-download">Download</button>
+        </div>
+      `;
+
+      // Load version info
+      const versionPill = modalContent.querySelector('.version-pill');
+      if (app.version) {
+        versionPill.textContent = 'v' + app.version;
+      } else if (app.versionUrl) {
+        fetch(app.versionUrl).then(r => r.text()).then(txt => {
+          versionPill.textContent = 'v' + txt.trim();
+        }).catch(() => {
+          versionPill.textContent = 'v?';
+        });
+      }
+
+      // Set up event listeners
+      modalContent.querySelector('.modal-close').addEventListener('click', closeModal);
+      
+      modalContent.querySelector('.modal-download').addEventListener('click', async () => {
+        const price = app.price ? app.price.toUpperCase() : 'PRIVATE';
+        
+        // Check if app is private
+        if (price === 'PRIVATE') {
+          const userCode = prompt('Enter the download code:');
+          if (!userCode) return; // cancelled or empty
+
+          // Hash the entered code using SHA-256
+          const encoder = new TextEncoder();
+          const data = encoder.encode(userCode.trim());
+          const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+          // Compare with the stored hash (precomputed SHA-256 hash of "StormKey2025")
+          const correctHash = '0cafa1367e860ac2c1277972b8e9bbf47096a32caefcffc00b69bcc351a5de18';
+
+          if (hashHex === correctHash) {
+            // Decode the Base64 download link before opening
+            const realLink = atob(app.download);
+            window.open(realLink, '_blank');
+          } else {
+            alert('Incorrect code.');
+          }
+        } else {
+          // Free or paid apps open directly
+          window.open(app.download, '_blank');
+        }
+      });
+
+      // Close modal when clicking outside
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+      });
+
+      modalOverlay.style.display = 'flex';
+    }
+
+    function getPriceClass(price) {
+      if (!price) return 'price-private';
+      const upperPrice = price.toUpperCase();
+      if (upperPrice === 'FREE') return 'price-free';
+      if (upperPrice === 'PRIVATE') return 'price-private';
+      return 'price-paid';
+    }
+
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+    }
+
+    // Render app cards
+    appsData.forEach(app => appsGrid.appendChild(renderCard(app)));
+  </script>
+</body>
+</html>
